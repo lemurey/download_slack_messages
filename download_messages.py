@@ -105,3 +105,5 @@ if __name__ == '__main__':
     else:
         max_downloads = None
     get_messages(channel, type_channel, max_downloads)
+    print 'hello'
+    print 'something else'
