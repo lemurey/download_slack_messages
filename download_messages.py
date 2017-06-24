@@ -3,12 +3,12 @@ import os
 import requests
 import sys
 
-if 'SLACK_API_TOKEN' not in os.environ:
+if 'SLACK_API_KEY' not in os.environ:
     with open('.env', 'r') as f:
         for line in f.read().strip().split('\n'):
             key, value = line.split('=')
             os.environ[key] = value
-TOKEN = os.environ['SLACK_API_TOKEN']
+TOKEN = os.environ['SLACK_API_KEY']
 
 
 def slack_call(method, token, **kwargs):
@@ -73,7 +73,7 @@ def get_messages(channel_name, private, max_messages):
     else:
         method = 'channels.history'
 
-    next = slack_call(method, TOKEN, channel=id_num)
+    next = slack_call('groups.history', TOKEN, channel=id_num)
     messages = next['messages']
 
     while next['has_more']:
@@ -82,7 +82,7 @@ def get_messages(channel_name, private, max_messages):
             break
 
         next_latest = messages[-1]['ts']
-        next = slack_call(method, TOKEN,
+        next = slack_call('groups.history', TOKEN,
                           channel=id_num, latest=next_latest)
 
         messages.extend(next['messages'])
