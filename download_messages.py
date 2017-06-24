@@ -1,6 +1,6 @@
 import json
 import os
-import requests
+import urllib2
 import sys
 
 if 'SLACK_API_KEY' not in os.environ:
@@ -27,7 +27,7 @@ def slack_call(method, token, **kwargs):
     for additional_option, additional_value in kwargs.iteritems():
         call_url += '&{}={}'.format(additional_option, additional_value)
 
-    return requests.get(call_url).json()
+    return json.load(urllib2.urlopen(call_url))
 
 
 def find_id_by_name(name, private=True):
@@ -73,7 +73,7 @@ def get_messages(channel_name, private, max_messages):
     else:
         method = 'channels.history'
 
-    next = slack_call('groups.history', TOKEN, channel=id_num)
+    next = slack_call(method, TOKEN, channel=id_num)
     messages = next['messages']
 
     while next['has_more']:
@@ -82,7 +82,7 @@ def get_messages(channel_name, private, max_messages):
             break
 
         next_latest = messages[-1]['ts']
-        next = slack_call('groups.history', TOKEN,
+        next = slack_call(method, TOKEN,
                           channel=id_num, latest=next_latest)
 
         messages.extend(next['messages'])
@@ -105,5 +105,3 @@ if __name__ == '__main__':
     else:
         max_downloads = None
     get_messages(channel, type_channel, max_downloads)
-    print 'hello'
-    print 'something else'
