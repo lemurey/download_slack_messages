@@ -3,9 +3,9 @@ Script for downloading slack messages by channel
 
 Instructions:
 First get a slack api token by going [here](https://api.slack.com/docs/oauth-test-tokens) and putting it in your environment as
-SLACK_API_TOKEN or create a .env file in your copy of this repo with the line:  
+SLACK_API_KEY or create a .env file in your copy of this repo with the line:  
 ```bash  
-SLACK_API_TOKEN=<token>  
+SLACK_API_KEY=<token>  
 ```  
 Then run `python download_messages.py <channel name> <private/public>`
 `<private/public>` is a flag specifying whether the channel you are trying to download is private (slack has different api methods for private and public channels so I need to know which it is in the script).  
