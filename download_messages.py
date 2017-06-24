@@ -52,22 +52,29 @@ def find_id_by_name(name, private=True):
     return 'ENTRY NOT FOUND'
 
 
-def get_messages(channel_name, private, max_messages):
+def get_messages(channel_name, max_messages):
     '''
     download messages from slack channel and save them to disk as
     messages_<channel_name>.json
     INPUT:
         channel_name: string; name of channel to download
-        private: boolean; whether channel is private or not
         max_messages: int or None; maximum messages to download, if None then
         all messages in channel will be downloaded
     OUTPUT:
         None
     '''
-    id_num = find_id_by_name(channel_name, private)
-    if id_num == 'ENTRY NOT FOUND':
+    private = True
+    check_1 = find_id_by_name(channel_name, private)
+    check_2 = find_id_by_name(channel_name, not private)
+    if check_1 == check_2 and check_1 == 'ENTRY NOT FOUND':
         message = 'either {} does not exist or you do not have access to it'
         raise ValueError(message.format(channel_name))
+    elif check_1 == 'ENTRY NOT FOUND':
+        private = not private
+        id_num = check_2
+    else:
+        id_num = check_1
+
     if private:
         method = 'groups.history'
     else:
@@ -95,13 +102,8 @@ def get_messages(channel_name, private, max_messages):
 
 if __name__ == '__main__':
     channel = sys.argv[1]
-    type_channel = sys.argv[2]
-    if type_channel.lower() == 'private' or type_channel.lower() == 'true':
-        type_channel = True
-    else:
-        type_channel = False
-    if len(sys.argv) > 3:
-        max_downloads = int(sys.argv[3])
+    if len(sys.argv) > 2:
+        max_downloads = int(sys.argv[2])
     else:
         max_downloads = None
-    get_messages(channel, type_channel, max_downloads)
+    get_messages(channel, max_downloads)
